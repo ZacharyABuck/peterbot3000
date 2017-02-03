@@ -41,7 +41,21 @@ def defineWordGet():
     return 'this should return something useful'
 
 
-@app.route('/v1/defineWord/', methods=['POST'])
+@app.route('/v1/defineWordTest', methods=['POST'])
+def defineWordTest():
+    rtn = {
+        'speech': 'Test',
+        'displayText': 'Test',
+        'data': {},
+        'contextOut': [],
+        'source': 'PeterKnowsBest'
+    }
+    contents = json.dumps(rtn)
+
+    return Response(contents, 200, mimetype='application/json')
+
+
+@app.route('/v1/defineWord', methods=['POST'])
 def defineWord():
     params = request.get_json()
     try:
@@ -83,15 +97,15 @@ def defineWord():
         definitions = senses[0]['definitions']
 
     if definitions and len(definitions) > 0:
-        definition = ['definitions'][0]
+        definition = definitions[0]
 
-    response = 'I don\'t know the definition of ' + word
+    resp = 'I don\'t know the definition of ' + word
     if definition:
-        response = definition
+        resp = definition
 
     rtn = {
-        'speech': response,
-        'displayText': response,
+        'speech': resp,
+        'displayText': resp,
         'data': {},
         'contextOut': [],
         'source': 'PeterKnowsBest'
