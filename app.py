@@ -31,7 +31,7 @@ def about():
     return render_template('about.html')
 
 
-@app.route('/v1/defineWord', methods=['POST'])
+@app.route('/v1/defineWord/', methods=['POST'])
 def defineWord():
     params = request.get_json()
     try:
@@ -76,7 +76,7 @@ def defineWord():
         definition = ['definitions'][0]
 
     response = 'I don\'t know the definition of ' + word
-    if (definition):
+    if definition:
         response = definition
 
     rtn = {
