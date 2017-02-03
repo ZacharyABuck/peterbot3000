@@ -36,6 +36,11 @@ def test_output():
     return 'this is my test output'
 
 
+@app.route('/v1/defineWord', methods=['GET'])
+def defineWordGet():
+    return 'this should return something useful'
+
+
 @app.route('/v1/defineWord/', methods=['POST'])
 def defineWord():
     params = request.get_json()
