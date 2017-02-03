@@ -67,7 +67,7 @@ def defineWord():
         }
 
         response = requests.get(url, headers=headers)
-        response_json = r.json()
+        response_json = response.json()
         results = response_json['results']
 
     if results and len(results) > 0:
