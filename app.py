@@ -7,7 +7,8 @@ This file creates your application.
 """
 
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, Response, json
+import requests
 
 app = Flask(__name__)
 
@@ -30,16 +31,68 @@ def about():
     return render_template('about.html')
 
 
+@app.route('/v1/defineWord', methods=['POST'])
+def defineWord():
+    params = request.get_json()
+    try:
+        word = params['result']['parameters']['any']
+    except Exception as e:
+        response = 'I\'m having some trouble with that word'
+        rtn = {
+            'speech': response,
+            'displayText': response,
+            'data': {},
+            'contextOut': [],
+            'source': 'PeterKnowsBest'
+        }
+        contents = json.dumps(rtn)
+
+        return Response(contents, 200, mimetype='application/json')
+
+    if word:
+        url = 'https://od-api.oxforddictionaries.com/api/v1/entries/en/' + word
+        headers = {
+            'app_id': '4a5a193d',
+            'app_key': 'e6ce29c1c11fd02c4aa3877956b61b2f'
+        }
+
+        response = requests.get(url, headers=headers)
+        response_json = r.json()
+        results = response_json['results']
+
+    if results and len(results) > 0:
+        lexicalEntries = results[0]['lexicalEntries']
+
+    if lexicalEntries and len(lexicalEntries) > 0:
+        entries = lexicalEntries[0]['entries']
+
+    if entries and len(entries) > 0:
+        senses = entries[0]['senses']
+
+    if senses and len(senses) > 0:
+        definitions = senses[0]['definitions']
+
+    if definitions and len(definitions) > 0:
+        definition = ['definitions'][0]
+
+    response = 'I don\'t know the definition of ' + word
+    if (definition):
+        response = definition
+
+    rtn = {
+        'speech': response,
+        'displayText': response,
+        'data': {},
+        'contextOut': [],
+        'source': 'PeterKnowsBest'
+    }
+    contents = json.dumps(rtn)
+
+    return Response(contents, 200, mimetype='application/json')
+
 ###
 # The functions below should be applicable to all Flask apps.
 ###
-
-@app.route('/<file_name>.txt')
-def send_text_file(file_name):
-    """Send your static text file."""
-    file_dot_text = file_name + '.txt'
-    return app.send_static_file(file_dot_text)
-
 
 @app.after_request
 def add_header(response):
