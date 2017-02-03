@@ -31,6 +31,11 @@ def about():
     return render_template('about.html')
 
 
+@app.route('/test_output')
+def test_output():
+    return 'this is my test output'
+
+
 @app.route('/v1/defineWord/', methods=['POST'])
 def defineWord():
     params = request.get_json()
